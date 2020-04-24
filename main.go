@@ -4,11 +4,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
 func main() {
-	log.Println("Server started")
+	port := os.Getenv("PORT")
+	if port == "" {
+		log.Fatal("Missing env variable 'PORT'")
+	}
 
 	http.Handle("/", http.FileServer(http.Dir("./static")))
 
@@ -24,5 +28,6 @@ func main() {
 		w.Write([]byte(response))
 	})
 
-	http.ListenAndServe(":8080", nil)
+	log.Printf("Server started, listening on port: %s", port)
+	http.ListenAndServe(fmt.Sprintf(":%s", port), nil)
 }
